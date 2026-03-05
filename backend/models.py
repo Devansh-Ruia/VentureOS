@@ -12,9 +12,11 @@ class VentureBrief(BaseModel):
     idea: str
     viability_score: int | None = None
     market_summary: str | None = None
+    market_size: str | None = None
     competitors: list[str] = []
     differentiation: str | None = None
     brand_name: str | None = None
+    tagline: str | None = None
     domain: str | None = None
     domain_available: bool | None = None
     landing_page_url: str | None = None

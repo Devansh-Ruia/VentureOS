@@ -1,9 +1,9 @@
 from typing import AsyncGenerator
-from backend.models import VentureBrief, AgentEvent
-from backend.agents.scout_agent import run_scout_task
-from backend.agents.brand_agent import run_brand_task
-from backend.agents.builder_agent import run_builder_task
-from backend.agents.gtm_agent import run_gtm_task
+from models import VentureBrief, AgentEvent
+from agents.scout_agent import run_scout_task
+from agents.brand_agent import run_brand_task
+from agents.builder_agent import run_builder_task
+from agents.gtm_agent import run_gtm_task
 
 
 async def run_venture_pipeline(idea: str) -> AsyncGenerator[AgentEvent, None]:

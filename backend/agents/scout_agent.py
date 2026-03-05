@@ -1,9 +1,9 @@
 import os
 from crewai import Agent, Task
 from anthropic import Anthropic
-from backend.models import VentureBrief
-from backend.tools.apify_tools import run_competitor_search
-from backend.tools.exa_tools import search_similar_products
+from models import VentureBrief
+from tools.apify_tools import run_competitor_search
+from tools.exa_tools import search_similar_products
 
 
 def create_scout_agent() -> Agent:

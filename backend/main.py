@@ -2,8 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from backend.orchestrator import run_venture_pipeline
+from orchestrator import run_venture_pipeline
+from dotenv import load_dotenv
 import json
+
+load_dotenv()
 
 
 app = FastAPI()

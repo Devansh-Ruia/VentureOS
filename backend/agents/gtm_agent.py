@@ -1,7 +1,7 @@
 import os
 from crewai import Agent
 from anthropic import Anthropic
-from backend.models import VentureBrief, GTMPlan
+from models import VentureBrief, GTMPlan
 
 
 def create_gtm_agent() -> Agent:

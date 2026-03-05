@@ -1,9 +1,9 @@
 import os
 from crewai import Agent
 from anthropic import Anthropic
-from backend.models import VentureBrief
-from backend.tools.stripe_tools import create_payment_link
-from backend.tools.vercel_tools import deploy_landing_page
+from models import VentureBrief
+from tools.stripe_tools import create_payment_link
+from tools.vercel_tools import deploy_landing_page
 
 
 def create_builder_agent() -> Agent:

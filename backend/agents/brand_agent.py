@@ -1,8 +1,8 @@
 import os
 from crewai import Agent
 from anthropic import Anthropic
-from backend.models import VentureBrief
-from backend.tools.domain_tools import generate_domain_candidates, check_domain_availability
+from models import VentureBrief
+from tools.domain_tools import generate_domain_candidates, check_domain_availability
 
 
 def create_brand_agent() -> Agent:
