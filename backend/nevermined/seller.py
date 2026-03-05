@@ -1,6 +1,6 @@
 """VentureOS Nevermined Seller Agent Registration."""
 import os
-from payments_py import Payments, Environment
+from payments_py import Payments, PaymentOptions
 
 _payments_instance = None
 
@@ -9,10 +9,11 @@ def get_payments_instance():
     """Get or create singleton Payments instance."""
     global _payments_instance
     if _payments_instance is None:
-        env_name = os.getenv("NVM_ENVIRONMENT", "sandbox")
-        _payments_instance = Payments(
-            nvm_api_key=os.getenv("NVM_API_KEY"),
-            environment=Environment.sandbox if env_name == "sandbox" else Environment.production
+        _payments_instance = Payments.get_instance(
+            PaymentOptions(
+                nvm_api_key=os.getenv("NVM_API_KEY"),
+                environment=os.getenv("NVM_ENVIRONMENT", "sandbox")
+            )
         )
     return _payments_instance
 
