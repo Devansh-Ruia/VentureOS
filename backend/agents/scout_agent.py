@@ -17,7 +17,7 @@ def create_scout_agent() -> Agent:
     )
 
 
-def run_scout_task(brief: VentureBrief) -> VentureBrief:
+async def run_scout_task(brief: VentureBrief) -> VentureBrief:
     """
     Execute market validation research.
     Returns updated VentureBrief with market intelligence.
@@ -29,8 +29,7 @@ def run_scout_task(brief: VentureBrief) -> VentureBrief:
     external_data = None
     try:
         from nevermined.buyer import query_external_research_agent
-        import asyncio
-        external_data = asyncio.run(query_external_research_agent(brief.idea))
+        external_data = await query_external_research_agent(brief.idea)
     except ImportError:
         pass
     

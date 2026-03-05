@@ -16,7 +16,7 @@ async def run_venture_pipeline(idea: str) -> AsyncGenerator[AgentEvent, None]:
     # Scout Agent
     try:
         yield AgentEvent(agent="scout", status="running")
-        brief = run_scout_task(brief)
+        brief = await run_scout_task(brief)
         yield AgentEvent(
             agent="scout",
             status="done",
