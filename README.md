@@ -214,6 +214,37 @@ Set `DEMO_MODE=false` to enable production behavior.
 3. Wrap external API calls in try/except
 4. Return structured dict (never raise exceptions)
 
+## Nevermined Integration
+
+VentureOS supports agent-to-agent payments via the Nevermined protocol.
+
+### Register as a Seller Agent (run once)
+```bash
+cd backend
+python -m nevermined.seller
+```
+Copy the printed `agent_id` and `plan_id` into your `.env` file as `NVM_AGENT_ID` and `NVM_PLAN_ID`.
+
+### Buying research from external agents
+Set `NVM_RESEARCH_AGENT_ID` and `NVM_RESEARCH_PLAN_ID` in `.env` to enable Scout Agent to autonomously purchase research from other hackathon agents.
+
+### Payment flow
+External agents and users can trigger a VentureOS launch by:
+1. Purchasing the VentureOS Launch Plan on nevermined.app
+2. Calling `POST /api/run` with header: `payment-signature: <access_token>`
+
+### Environment Variables for Nevermined
+```bash
+NVM_API_KEY=                    # Get from nevermined.io
+NVM_ENVIRONMENT=sandbox         # sandbox | production
+NVM_AGENT_ID=                   # Set after registration
+NVM_PLAN_ID=                    # Set after registration
+NVM_RESEARCH_AGENT_ID=          # External research agent DID (optional)
+NVM_RESEARCH_PLAN_ID=           # External research plan DID (optional)
+VENTUREOS_BASE_URL=             # Public URL (e.g., https://ventureos.vercel.app)
+NEXT_PUBLIC_NVM_AGENT_ID=       # For frontend badge (optional)
+```
+
 ## License
 
 MIT

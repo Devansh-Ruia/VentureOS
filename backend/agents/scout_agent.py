@@ -25,7 +25,18 @@ def run_scout_task(brief: VentureBrief) -> VentureBrief:
     competitor_data = run_competitor_search(brief.idea)
     similar_products = search_similar_products(brief.idea)
     
+    # Query external Nevermined research agent if configured
+    external_data = None
+    try:
+        from nevermined.buyer import query_external_research_agent
+        import asyncio
+        external_data = asyncio.run(query_external_research_agent(brief.idea))
+    except ImportError:
+        pass
+    
     client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    
+    external_context = f"\n\nExternal Research Data:\n{external_data}" if external_data else ""
     
     prompt = f"""Analyze this business idea and research data:
 
@@ -35,7 +46,7 @@ Competitor Search Results:
 {competitor_data.get('results', [])}
 
 Similar Products (Exa):
-{similar_products.get('results', [])}
+{similar_products.get('results', [])}{external_context}
 
 Generate:
 1. market_summary: 2-3 sentences about the market opportunity

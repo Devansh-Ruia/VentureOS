@@ -4,6 +4,7 @@ import { useState } from 'react';
 import IdeaInput from '@/components/IdeaInput';
 import AgentStream, { AgentEvent } from '@/components/AgentStream';
 import VentureBrief from '@/components/VentureBrief';
+import NeverminedBadge from '@/components/NeverminedBadge';
 
 interface VentureBriefData {
   brand_name: string;
@@ -101,6 +102,8 @@ export default function Home() {
 
         {brief && <VentureBrief brief={brief} />}
       </main>
+
+      <NeverminedBadge />
     </div>
   );
 }
