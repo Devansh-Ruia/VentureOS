@@ -14,6 +14,12 @@ class NeverminedPaymentMiddleware(BaseHTTPMiddleware):
         if request.url.path != "/api/run" or request.method != "POST":
             return await call_next(request)
         
+        # At the top of the middleware check
+        if os.getenv("NVM_REQUIRE_PAYMENT", "false").lower() != "true":
+            # Payment enforcement disabled — pass all requests through
+            response = await call_next(request)
+            return response
+        
         agent_id = os.getenv("NVM_AGENT_ID")
         plan_id = os.getenv("NVM_PLAN_ID")
         
