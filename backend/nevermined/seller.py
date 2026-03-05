@@ -1,72 +1,84 @@
 """VentureOS Nevermined Seller Agent Registration."""
+from dotenv import load_dotenv
+from pathlib import Path
 import os
-from payments_py import Payments, PaymentOptions
+
+load_dotenv(Path(__file__).parent.parent.parent / ".env")
+
+from payments_py import Payments
+from payments_py import PaymentOptions
+from payments_py.common.types import PlanMetadata
 
 _payments_instance = None
 
 
-def get_payments_instance():
+def get_payments_instance() -> Payments:
     """Get or create singleton Payments instance."""
     global _payments_instance
     if _payments_instance is None:
-        _payments_instance = Payments.get_instance(
-            PaymentOptions(
-                nvm_api_key=os.getenv("NVM_API_KEY"),
-                environment=os.getenv("NVM_ENVIRONMENT", "sandbox")
-            )
-        )
+        _payments_instance = Payments(PaymentOptions(
+            nvm_api_key=os.getenv("NVM_API_KEY"),
+            environment=os.getenv("NVM_ENVIRONMENT", "sandbox"),
+        ))
     return _payments_instance
 
 
 def register_ventureos_agent() -> dict:
     """
     Register VentureOS as a Nevermined seller agent.
-    Returns dict with agent_id and plan_id to save in .env
+    Run once. Copy the printed agent_id and plan_id into your .env.
     """
     payments = get_payments_instance()
     base_url = os.getenv("VENTUREOS_BASE_URL", "http://localhost:8000")
-    
-    # Create credits-based pricing plan (10 USDC, 1 credit)
-    plan = payments.ai_query_api.create_credits_plan(
+
+    # 1. Create credits-based pricing plan
+    plan_metadata = PlanMetadata(
         name="VentureOS Launch Plan",
         description="1 credit per autonomous business launch",
-        price=10,
-        token_address=payments.ai_query_api.get_usdc_address(),
-        amount_of_credits=1,
-        tags=["launch", "startup", "autonomous"]
+        tags=["launch", "startup", "autonomous"],
     )
-    plan_id = plan["did"]
-    
-    # Register VentureOS agent
-    agent = payments.ai_query_api.create_agent(
-        name="VentureOS",
-        description="Autonomous business launch agent. Input a business idea, receive a live URL, brand, and go-to-market plan.",
-        service_charge_type="fixed",
-        auth_type="bearer",
-        amount_of_credits=1,
-        min_credits_to_charge=1,
-        max_credits_to_charge=1,
-        endpoints=[{"POST": f"{base_url}/api/run"}],
-        usage_docs=f"{base_url}/.well-known/agent.json",
-        is_for_sale=True,
-        sample_link="",
-        tags=["launch", "startup", "autonomous", "business"]
+    # USDC on Arbitrum Sepolia (sandbox)
+    USDC_ADDRESS = "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d"
+    price_config = payments.plans.get_erc20_price_config(
+        10_000_000,          # 10 USDC (6 decimals)
+        USDC_ADDRESS,
+        payments.account_address,
     )
-    agent_id = agent["did"]
-    
-    # Link agent to plan
-    payments.ai_query_api.add_agent_to_plan(plan_id, agent_id)
-    
-    result = {"agent_id": agent_id, "plan_id": plan_id}
-    
-    print(f"\n✅ VentureOS registered successfully!")
+    credits_config = payments.plans.get_fixed_credits_config(100)
+    plan_res = payments.plans.register_credits_plan(
+        plan_metadata, price_config, credits_config
+    )
+    plan_id = plan_res["planId"]
+    print(f"✅ Plan created: {plan_id}")
+
+    # 2. Register VentureOS agent
+    agent_metadata = {
+        "name": "VentureOS",
+        "description": (
+            "Autonomous business launch agent. "
+            "Input a business idea, receive a live URL, brand, and go-to-market plan."
+        ),
+        "tags": ["launch", "startup", "autonomous", "business"],
+    }
+    agent_api = {
+        "endpoints": [{"POST": f"{base_url}/api/run"}],
+        "agentDefinitionUrl": f"{base_url}/.well-known/agent.json",
+    }
+    agent_res = payments.agents.register_agent(
+        agent_metadata,
+        agent_api,
+        [plan_id],
+    )
+    agent_id = agent_res["agentId"]
+    print(f"✅ Agent created: {agent_id}")
+
     print(f"\nAdd these to your .env file:")
     print(f"NVM_AGENT_ID={agent_id}")
     print(f"NVM_PLAN_ID={plan_id}")
-    
-    return result
+
+    return {"agent_id": agent_id, "plan_id": plan_id}
 
 
 if __name__ == "__main__":
     result = register_ventureos_agent()
-    print(f"\nAgent registered: {result}")
+    print(f"\nDone: {result}")
