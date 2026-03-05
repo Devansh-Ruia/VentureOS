@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+crewai
+langchain
+anthropic
+apify-client
+exa-py
+stripe
+python-dotenv
+pydantic
+httpx
