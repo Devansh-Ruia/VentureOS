@@ -1,0 +1,68 @@
+import os
+from crewai import Agent, Task
+from anthropic import Anthropic
+from backend.models import VentureBrief
+from backend.tools.apify_tools import run_competitor_search
+from backend.tools.exa_tools import search_similar_products
+
+
+def create_scout_agent() -> Agent:
+    """Create the Scout agent for market validation."""
+    return Agent(
+        role="Market Research Analyst",
+        goal="Validate business ideas through competitive intelligence and market analysis",
+        backstory="Expert at identifying market opportunities and competitive landscapes",
+        verbose=True,
+        allow_delegation=False,
+    )
+
+
+def run_scout_task(brief: VentureBrief) -> VentureBrief:
+    """
+    Execute market validation research.
+    Returns updated VentureBrief with market intelligence.
+    """
+    competitor_data = run_competitor_search(brief.idea)
+    similar_products = search_similar_products(brief.idea)
+    
+    client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    
+    prompt = f"""Analyze this business idea and research data:
+
+Idea: {brief.idea}
+
+Competitor Search Results:
+{competitor_data.get('results', [])}
+
+Similar Products (Exa):
+{similar_products.get('results', [])}
+
+Generate:
+1. market_summary: 2-3 sentences about the market opportunity
+2. competitors: List top 3 competitor names only (just company names, no descriptions)
+3. differentiation: 1 sentence explaining how this idea could differentiate
+4. viability_score: Integer 0-100 using this logic:
+   - Start at 50
+   - Add up to +20 for clear monetization potential
+   - Add up to +15 for trending market signals
+   - Add up to +15 for low direct competition
+   - Subtract up to -20 for saturated markets
+   - Subtract up to -15 for unclear monetization
+
+Return ONLY valid JSON with keys: market_summary, competitors (array of 3 strings), differentiation, viability_score"""
+
+    response = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=1024,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    
+    import json
+    result = json.loads(response.content[0].text)
+    
+    brief.market_summary = result["market_summary"]
+    brief.competitors = result["competitors"][:3]
+    brief.differentiation = result["differentiation"]
+    brief.viability_score = result["viability_score"]
+    
+    return brief
