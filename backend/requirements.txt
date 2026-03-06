@@ -1,12 +1,11 @@
 fastapi
 uvicorn
-langchain
 anthropic
 apify-client
 exa-py
 stripe
 python-dotenv
 pydantic>=2.0
-httpx
+httpx==0.28.1
+groq
 payments-py[fastapi]
-tiktoken==0.7.0
