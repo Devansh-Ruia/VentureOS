@@ -3,6 +3,9 @@ interface VentureBrief {
   viability_score?: number;
   landing_page_url?: string;
   market_summary?: string;
+  market_size?: string;
+  tagline?: string;
+  domain?: string;
   differentiation?: string;
   competitors?: string[];
   live_url?: string;
@@ -32,6 +35,18 @@ export default function VentureBrief({ brief }: VentureBriefProps) {
       >
         {brief.brand_name || 'Untitled venture'}
       </h2>
+      
+      {brief.domain && (
+        <p style={{
+          fontSize: '13px',
+          color: '#888',
+          letterSpacing: '0.04em',
+          marginTop: '8px',
+          marginBottom: '32px'
+        }}>
+          {brief.domain}
+        </p>
+      )}
       
       {brief.viability_score !== undefined && (
         <p 
@@ -88,6 +103,50 @@ export default function VentureBrief({ brief }: VentureBriefProps) {
               style={{ fontFamily: 'system-ui, sans-serif', fontSize: '15px', lineHeight: '1.6' }}
             >
               {brief.market_summary}
+            </p>
+          </div>
+        )}
+        
+        {brief.market_size && (
+          <div>
+            <h3 
+              className="text-[#1a1a1a] mb-2"
+              style={{ 
+                fontFamily: 'system-ui, sans-serif',
+                fontSize: '11px',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase'
+              }}
+            >
+              Market size
+            </h3>
+            <p 
+              className="text-[#1a1a1a]"
+              style={{ fontFamily: 'system-ui, sans-serif', fontSize: '15px', lineHeight: '1.6' }}
+            >
+              {brief.market_size}
+            </p>
+          </div>
+        )}
+        
+        {brief.tagline && (
+          <div>
+            <h3 
+              className="text-[#1a1a1a] mb-2"
+              style={{ 
+                fontFamily: 'system-ui, sans-serif',
+                fontSize: '11px',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase'
+              }}
+            >
+              Tagline
+            </h3>
+            <p 
+              className="text-[#1a1a1a]"
+              style={{ fontFamily: 'system-ui, sans-serif', fontSize: '15px', lineHeight: '1.6' }}
+            >
+              {brief.tagline}
             </p>
           </div>
         )}

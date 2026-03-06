@@ -37,9 +37,11 @@ Similar Products (Exa):
 
 Generate:
 1. market_summary: 2-3 sentences about the market opportunity
-2. competitors: List top 3 competitor names only (just company names, no descriptions)
-3. differentiation: 1 sentence explaining how this idea could differentiate
-4. viability_score: Integer 0-100 using this logic:
+2. market_size: Short string like "~$40B globally"
+3. tagline: One short punchy line describing the product, under 10 words
+4. competitors: List top 3 competitor names only (just company names, no descriptions)
+5. differentiation: 1 sentence explaining how this idea could differentiate
+6. viability_score: Integer 0-100 using this logic:
    - Start at 50
    - Add up to +20 for clear monetization potential
    - Add up to +15 for trending market signals
@@ -47,7 +49,7 @@ Generate:
    - Subtract up to -20 for saturated markets
    - Subtract up to -15 for unclear monetization
 
-Return ONLY valid JSON with keys: market_summary, competitors (array of 3 strings), differentiation, viability_score"""
+Return ONLY valid JSON with keys: market_summary, market_size, tagline, competitors (array of 3 strings), differentiation, viability_score"""
 
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
@@ -61,6 +63,8 @@ Return ONLY valid JSON with keys: market_summary, competitors (array of 3 string
     result = json.loads(raw)
     
     brief.market_summary = result["market_summary"]
+    brief.market_size = result["market_size"]
+    brief.tagline = result["tagline"]
     brief.competitors = result["competitors"][:3]
     brief.differentiation = result["differentiation"]
     brief.viability_score = result["viability_score"]
