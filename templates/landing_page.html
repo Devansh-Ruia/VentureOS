@@ -1,42 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{brand_name}}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{brand_name}}</title>
+  <style>
+    :root {
+      --ink: #1a1a1a;
+      --paper: #F0EDE8;
+      --muted: #888888;
+      --rule: 1px solid #1a1a1a;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'system-ui', -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* nav */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 24px 40px;
+      border-bottom: var(--rule);
+    }
+
+    .wordmark {
+      font-family: 'Georgia', serif;
+      font-size: 14px;
+      font-weight: normal;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* main content */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 96px 40px 128px;
+    }
+
+    /* headline */
+    .headline {
+      font-family: 'Georgia', serif;
+      font-size: clamp(56px, 10vw, 112px);
+      font-weight: normal;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+    }
+
+    /* subheadline */
+    .subheadline {
+      font-size: 17px;
+      line-height: 1.55;
+      color: #555;
+      max-width: 480px;
+      margin-bottom: 64px;
+    }
+
+    /* section divider */
+    .divider {
+      border: none;
+      border-top: var(--rule);
+      margin: 48px 0;
+    }
+
+    /* section label */
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    /* features */
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 64px;
+    }
+
+    .feature {
+      display: flex;
+      gap: 16px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .feature-dash {
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    /* cta */
+    .cta-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .cta {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--paper);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 14px 40px;
+      border-radius: 2px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .cta:hover {
+      background: var(--paper);
+      color: var(--ink);
+      outline: var(--rule);
+    }
+
+    .social-proof {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* footer */
+    footer {
+      border-top: var(--rule);
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand {
+      font-family: 'Georgia', serif;
+      font-size: 13px;
+      font-weight: normal;
+    }
+
+    .footer-note {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+  </style>
 </head>
-<body class="bg-[#0a0a0a] text-white min-h-screen">
-    <nav class="border-b border-gray-800">
-        <div class="max-w-screen-xl mx-auto px-6 py-4">
-            <div class="font-bold text-xl">{{brand_name}}</div>
-        </div>
-    </nav>
+<body>
 
-    <main class="max-w-2xl mx-auto px-6 py-16">
-        <div class="text-center mb-16">
-            <h1 class="text-5xl font-bold mb-4">{{headline}}</h1>
-            <p class="text-xl text-gray-400">{{subheadline}}</p>
-        </div>
+  <nav>
+    <span class="wordmark">{{brand_name}}</span>
+    <span class="nav-label">Early access</span>
+  </nav>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
-            <div class="border border-gray-800 rounded-lg p-6">
-                <p class="text-gray-300">{{feature_1}}</p>
-            </div>
-            <div class="border border-gray-800 rounded-lg p-6">
-                <p class="text-gray-300">{{feature_2}}</p>
-            </div>
-            <div class="border border-gray-800 rounded-lg p-6">
-                <p class="text-gray-300">{{feature_3}}</p>
-            </div>
-        </div>
+  <main>
+    <h1 class="headline">{{headline}}</h1>
+    <p class="subheadline">{{subheadline}}</p>
 
-        <div class="text-center">
-            <a href="{{cta_url}}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
-                {{cta_label}}
-            </a>
-            <p class="text-sm text-gray-500 mt-4">{{social_proof}}</p>
-        </div>
-    </main>
+    <hr class="divider" />
+
+    <p class="section-label">What it does</p>
+    <div class="features">
+      <div class="feature">
+        <span class="feature-dash">—</span>
+        <span>{{feature_1}}</span>
+      </div>
+      <div class="feature">
+        <span class="feature-dash">—</span>
+        <span>{{feature_2}}</span>
+      </div>
+      <div class="feature">
+        <span class="feature-dash">—</span>
+        <span>{{feature_3}}</span>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="cta-wrap">
+      <a href="{{cta_url}}" class="cta">{{cta_label}}</a>
+      <span class="social-proof">{{social_proof}}</span>
+    </div>
+  </main>
+
+  <footer>
+    <span class="footer-brand">{{brand_name}}</span>
+    <span class="footer-note">Built with VentureOS</span>
+  </footer>
+
 </body>
 </html>

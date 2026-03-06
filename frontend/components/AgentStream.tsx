@@ -12,10 +12,10 @@ interface AgentStreamProps {
 }
 
 const agents = [
-  { name: 'Scout', key: 'scout', icon: '🔍' },
-  { name: 'Brand', key: 'brand', icon: '🏷️' },
-  { name: 'Builder', key: 'builder', icon: '🏗️' },
-  { name: 'GTM', key: 'gtm', icon: '📣' },
+  { name: 'Scout', key: 'scout', number: '01' },
+  { name: 'Brand', key: 'brand', number: '02' },
+  { name: 'Builder', key: 'builder', number: '03' },
+  { name: 'GTM', key: 'gtm', number: '04' },
 ];
 
 export default function AgentStream({ events, isRunning }: AgentStreamProps) {
@@ -36,49 +36,77 @@ export default function AgentStream({ events, isRunning }: AgentStreamProps) {
     setExpanded(prev => ({ ...prev, [agentKey]: !prev[agentKey] }));
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusLabel = (status: string) => {
     switch (status) {
       case 'running':
-        return <span className="px-2 py-1 text-xs font-medium bg-yellow-900 text-yellow-300 rounded animate-pulse">Running</span>;
+        return 'running';
       case 'done':
-        return <span className="px-2 py-1 text-xs font-medium bg-green-900 text-green-300 rounded">Done</span>;
+        return 'done';
       case 'error':
-        return <span className="px-2 py-1 text-xs font-medium bg-red-900 text-red-300 rounded">Error</span>;
+        return 'error';
       default:
-        return <span className="px-2 py-1 text-xs font-medium bg-gray-800 text-gray-400 rounded">Idle</span>;
+        return '—';
     }
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-3">
-      {agents.map(agent => {
+    <div className="w-full max-w-[680px] mx-auto space-y-0">
+      {agents.map((agent, idx) => {
         const status = getAgentStatus(agent.key);
         const output = getAgentOutput(agent.key);
         const isExpanded = expanded[agent.key];
 
         return (
-          <div key={agent.key} className="border border-gray-800 rounded-lg p-4 bg-gray-900">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{agent.icon}</span>
-                <span className="font-semibold">{agent.name}</span>
+          <div key={agent.key}>
+            {idx > 0 && <div className="h-px bg-[#1a1a1a] my-6" />}
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center gap-4">
+                <span 
+                  className="text-[#1a1a1a]"
+                  style={{ 
+                    fontFamily: 'system-ui, sans-serif',
+                    fontSize: '14px',
+                    fontVariantNumeric: 'tabular-nums'
+                  }}
+                >
+                  {agent.number}
+                </span>
+                <span 
+                  className="text-[#1a1a1a]"
+                  style={{ fontFamily: 'system-ui, sans-serif', fontSize: '15px' }}
+                >
+                  {agent.name}
+                </span>
               </div>
-              {getStatusBadge(status)}
+              <span 
+                className={`text-[#1a1a1a] ${status === 'running' ? 'animate-pulse' : ''}`}
+                style={{ 
+                  fontFamily: 'system-ui, sans-serif',
+                  fontSize: '11px',
+                  textTransform: 'lowercase'
+                }}
+              >
+                {getStatusLabel(status)}
+              </span>
             </div>
             
             {output && (
-              <div className="mt-3">
+              <div className="mt-2 ml-[42px]">
                 <button
                   onClick={() => toggleExpanded(agent.key)}
-                  className="text-sm text-indigo-400 hover:text-indigo-300"
+                  className="text-[#1a1a1a] underline hover:no-underline"
+                  style={{ fontFamily: 'system-ui, sans-serif', fontSize: '12px' }}
                 >
-                  {isExpanded ? '▼ Hide output' : '▶ Show output'}
+                  {isExpanded ? 'hide' : 'show'}
                 </button>
                 
                 {isExpanded && (
-                  <div className="mt-2 p-3 bg-gray-950 rounded text-sm text-gray-300 whitespace-pre-wrap">
+                  <pre 
+                    className="mt-2 text-[#1a1a1a] whitespace-pre-wrap"
+                    style={{ fontFamily: 'monospace', fontSize: '12px', lineHeight: '1.6' }}
+                  >
                     {typeof output === 'string' ? output : JSON.stringify(output, null, 2)}
-                  </div>
+                  </pre>
                 )}
               </div>
             )}

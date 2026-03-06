@@ -65,37 +65,52 @@ export default function Home() {
                 setIsRunning(false);
               }
             } catch (e) {
-              console.error('Failed to parse event:', e);
+              // parsing error
             }
           }
         }
       }
     } catch (error) {
-      console.error('Stream error:', error);
       setIsRunning(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <nav className="border-b border-gray-800">
-        <div className="max-w-screen-xl mx-auto px-6 py-4">
-          <div className="font-bold text-xl">VentureOS</div>
+    <div className="min-h-screen bg-[#F0EDE8]">
+      <nav className="border-b border-[#1a1a1a] px-8 py-6">
+        <div 
+          className="text-[#1a1a1a]"
+          style={{ fontFamily: 'Georgia, serif', fontSize: '14px', fontWeight: '400' }}
+        >
+          VentureOS
         </div>
       </nav>
 
-      <main className="max-w-screen-xl mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4">Launch Your Business Idea</h1>
-          <p className="text-xl text-gray-400">
-            Four AI agents will validate, brand, build, and market your venture
+      <main className="max-w-[680px] mx-auto px-8 py-24">
+        <div className="mb-16">
+          <h1 
+            className="text-[#1a1a1a] mb-6"
+            style={{ 
+              fontFamily: 'Georgia, serif',
+              fontSize: 'clamp(40px, 6vw, 64px)',
+              lineHeight: '1.05',
+              textTransform: 'none'
+            }}
+          >
+            Launch your business idea
+          </h1>
+          <p 
+            className="text-[#555]"
+            style={{ fontFamily: 'system-ui, sans-serif', fontSize: '16px', lineHeight: '1.5' }}
+          >
+            Four AI agents will validate, brand, build, and market your venture.
           </p>
         </div>
 
         <IdeaInput onSubmit={handleSubmit} disabled={isRunning} />
 
         {events.length > 0 && (
-          <div className="mt-12">
+          <div className="mt-16">
             <AgentStream events={events} isRunning={isRunning} />
           </div>
         )}
