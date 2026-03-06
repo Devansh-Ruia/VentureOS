@@ -37,40 +37,29 @@ def deploy_landing_page(html: str, project_name: str) -> dict:
         }
         
         response = requests.post(url, headers=headers, json=payload, timeout=30)
+        print("Vercel status:", response.status_code)
+        print("Vercel response:", response.json())
         response.raise_for_status()
-        data = response.json()
         
-        deployment_id = data.get("id")
-        deployment_url = data.get("url")
+        deployment_id = response.json()["id"]
+        url = response.json()["url"]
         
-        # Poll deployment status
-        status_url = f"https://api.vercel.com/v13/deployments/{deployment_id}"
-        if team_id:
-            status_url += f"?teamId={team_id}"
-        
-        max_wait = 30
-        start = time.time()
-        
-        while time.time() - start < max_wait:
-            status_response = requests.get(status_url, headers=headers, timeout=10)
-            status_response.raise_for_status()
-            status_data = status_response.json()
-            
-            ready_state = status_data.get("readyState")
-            if ready_state == "READY":
-                return {
-                    "url": f"https://{deployment_url}",
-                    "deployment_id": deployment_id,
-                }
-            elif ready_state == "ERROR":
-                return {"error": "Deployment failed", "deployment_id": deployment_id}
-            
+        # Poll until READY
+        for _ in range(15):  # max 30 seconds
             time.sleep(2)
+            status_res = requests.get(
+                f"https://api.vercel.com/v13/deployments/{deployment_id}",
+                headers={"Authorization": f"Bearer {os.getenv('VERCEL_TOKEN')}"},
+            )
+            state = status_res.json().get("readyState", "")
+            print(f"Vercel state: {state}")
+            if state == "READY":
+                return {"url": f"https://{url}", "deployment_id": deployment_id}
+            elif state == "ERROR":
+                return {"url": None, "deployment_id": deployment_id, "error": "Deploy failed"}
         
-        return {
-            "url": f"https://{deployment_url}",
-            "deployment_id": deployment_id,
-        }
+        # Timeout — return URL anyway, it'll likely be ready soon
+        return {"url": f"https://{url}", "deployment_id": deployment_id}
     
     except Exception as e:
         return {"error": str(e)}
