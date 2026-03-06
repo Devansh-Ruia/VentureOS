@@ -1,6 +1,6 @@
 import os
 from crewai import Agent
-from anthropic import Anthropic
+from groq import Groq
 from models import VentureBrief, GTMPlan
 
 
@@ -20,7 +20,7 @@ def run_gtm_task(brief: VentureBrief) -> VentureBrief:
     Generate Week 1 go-to-market plan.
     Returns final VentureBrief with GTM strategy.
     """
-    client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     
     prompt = f"""Create a Week 1 go-to-market plan for this product:
 
@@ -45,14 +45,14 @@ Return ONLY valid JSON with structure:
   "product_hunt_blurb": "..."
 }}"""
 
-    response = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
         max_tokens=1024,
         messages=[{"role": "user", "content": prompt}]
     )
     
     import json
-    result = json.loads(response.content[0].text)
+    result = json.loads(response.choices[0].message.content)
     
     cold_email_str = f"Subject: {result['cold_email']['subject']}\n\n{result['cold_email']['body']}"
     

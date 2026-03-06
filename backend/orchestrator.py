@@ -27,6 +27,8 @@ async def run_venture_pipeline(idea: str) -> AsyncGenerator[AgentEvent, None]:
             }
         )
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         yield AgentEvent(agent="scout", status="error", output={"error": str(e)})
         return
     

@@ -1,6 +1,6 @@
 import os
 from crewai import Agent, Task
-from anthropic import Anthropic
+from groq import Groq
 from models import VentureBrief
 from tools.apify_tools import run_competitor_search
 from tools.exa_tools import search_similar_products
@@ -33,7 +33,7 @@ async def run_scout_task(brief: VentureBrief) -> VentureBrief:
     except ImportError:
         pass
     
-    client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     
     external_context = f"\n\nExternal Research Data:\n{external_data}" if external_data else ""
     
@@ -61,14 +61,14 @@ Generate:
 
 Return ONLY valid JSON with keys: market_summary, competitors (array of 3 strings), differentiation, viability_score"""
 
-    response = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
         max_tokens=1024,
         messages=[{"role": "user", "content": prompt}]
     )
     
     import json
-    result = json.loads(response.content[0].text)
+    result = json.loads(response.choices[0].message.content)
     
     brief.market_summary = result["market_summary"]
     brief.competitors = result["competitors"][:3]

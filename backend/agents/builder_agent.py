@@ -1,6 +1,6 @@
 import os
 from crewai import Agent
-from anthropic import Anthropic
+from groq import Groq
 from models import VentureBrief
 from tools.stripe_tools import create_payment_link
 from tools.vercel_tools import deploy_landing_page
@@ -22,7 +22,7 @@ def run_builder_task(brief: VentureBrief) -> VentureBrief:
     Generate landing page, integrate Stripe, and deploy to Vercel.
     Returns updated VentureBrief with live URL and payment link.
     """
-    client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     
     prompt = f"""Generate landing page copy for this product:
 
@@ -39,14 +39,14 @@ Generate:
 
 Return ONLY valid JSON with these exact keys."""
 
-    response = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
         max_tokens=512,
         messages=[{"role": "user", "content": prompt}]
     )
     
     import json
-    copy = json.loads(response.content[0].text)
+    copy = json.loads(response.choices[0].message.content)
     
     template_path = os.path.join(os.path.dirname(__file__), "..", "..", "templates", "landing_page.html")
     with open(template_path, "r", encoding="utf-8") as f:

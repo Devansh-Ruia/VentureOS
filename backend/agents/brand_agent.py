@@ -1,6 +1,6 @@
 import os
 from crewai import Agent
-from anthropic import Anthropic
+from groq import Groq
 from models import VentureBrief
 from tools.domain_tools import generate_domain_candidates, check_domain_availability
 
@@ -21,7 +21,7 @@ def run_brand_task(brief: VentureBrief) -> VentureBrief:
     Generate brand name and check domain availability.
     Returns updated VentureBrief with brand and domain info.
     """
-    client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     
     prompt = f"""Generate 5 brand name candidates for this business idea:
 
@@ -36,14 +36,14 @@ Constraints:
 
 Return ONLY a JSON array of 5 strings: ["Name1", "Name2", ...]"""
 
-    response = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
         max_tokens=256,
         messages=[{"role": "user", "content": prompt}]
     )
     
     import json
-    candidates = json.loads(response.content[0].text)
+    candidates = json.loads(response.choices[0].message.content)
     
     for candidate in candidates:
         domains = generate_domain_candidates(candidate)
