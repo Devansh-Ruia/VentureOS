@@ -1,18 +1,6 @@
 import os
-from crewai import Agent
 from groq import Groq
 from models import VentureBrief, GTMPlan
-
-
-def create_gtm_agent() -> Agent:
-    """Create the GTM agent for go-to-market strategy."""
-    return Agent(
-        role="Growth Strategist",
-        goal="Design actionable Week 1 go-to-market plans for new products",
-        backstory="Expert at identifying high-leverage distribution channels and crafting compelling messaging",
-        verbose=True,
-        allow_delegation=False,
-    )
 
 
 def run_gtm_task(brief: VentureBrief) -> VentureBrief:

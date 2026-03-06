@@ -1,20 +1,8 @@
 import os
-from crewai import Agent, Task
 from groq import Groq
 from models import VentureBrief
 from tools.apify_tools import run_competitor_search
 from tools.exa_tools import search_similar_products
-
-
-def create_scout_agent() -> Agent:
-    """Create the Scout agent for market validation."""
-    return Agent(
-        role="Market Research Analyst",
-        goal="Validate business ideas through competitive intelligence and market analysis",
-        backstory="Expert at identifying market opportunities and competitive landscapes",
-        verbose=True,
-        allow_delegation=False,
-    )
 
 
 async def run_scout_task(brief: VentureBrief) -> VentureBrief:

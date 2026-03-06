@@ -1,13 +1,12 @@
 fastapi
 uvicorn
-crewai
 langchain
 anthropic
 apify-client
 exa-py
 stripe
 python-dotenv
-pydantic
+pydantic>=2.0
 httpx
 payments-py[fastapi]
 tiktoken==0.7.0

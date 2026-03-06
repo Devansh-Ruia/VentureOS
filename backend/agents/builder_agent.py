@@ -1,20 +1,8 @@
 import os
-from crewai import Agent
 from groq import Groq
 from models import VentureBrief
 from tools.stripe_tools import create_payment_link
 from tools.vercel_tools import deploy_landing_page
-
-
-def create_builder_agent() -> Agent:
-    """Create the Builder agent for landing page creation and deployment."""
-    return Agent(
-        role="Product Builder",
-        goal="Create and deploy compelling landing pages with payment integration",
-        backstory="Expert at translating product vision into high-converting web experiences",
-        verbose=True,
-        allow_delegation=False,
-    )
 
 
 def run_builder_task(brief: VentureBrief) -> VentureBrief:

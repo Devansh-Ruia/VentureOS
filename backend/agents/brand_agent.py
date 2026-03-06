@@ -1,19 +1,7 @@
 import os
-from crewai import Agent
 from groq import Groq
 from models import VentureBrief
 from tools.domain_tools import generate_domain_candidates, check_domain_availability
-
-
-def create_brand_agent() -> Agent:
-    """Create the Brand agent for naming and domain selection."""
-    return Agent(
-        role="Brand Strategist",
-        goal="Generate memorable brand names and secure available domains",
-        backstory="Expert at creating distinctive brand identities that resonate with target audiences",
-        verbose=True,
-        allow_delegation=False,
-    )
 
 
 def run_brand_task(brief: VentureBrief) -> VentureBrief:
