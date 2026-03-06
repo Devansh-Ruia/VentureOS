@@ -52,7 +52,9 @@ Return ONLY valid JSON with structure:
     )
     
     import json
-    result = json.loads(response.choices[0].message.content)
+    raw = response.choices[0].message.content
+    raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+    result = json.loads(raw)
     
     cold_email_str = f"Subject: {result['cold_email']['subject']}\n\n{result['cold_email']['body']}"
     

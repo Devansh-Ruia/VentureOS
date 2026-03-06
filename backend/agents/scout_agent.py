@@ -68,7 +68,9 @@ Return ONLY valid JSON with keys: market_summary, competitors (array of 3 string
     )
     
     import json
-    result = json.loads(response.choices[0].message.content)
+    raw = response.choices[0].message.content
+    raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+    result = json.loads(raw)
     
     brief.market_summary = result["market_summary"]
     brief.competitors = result["competitors"][:3]

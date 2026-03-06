@@ -43,7 +43,9 @@ Return ONLY a JSON array of 5 strings: ["Name1", "Name2", ...]"""
     )
     
     import json
-    candidates = json.loads(response.choices[0].message.content)
+    raw = response.choices[0].message.content
+    raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+    candidates = json.loads(raw)
     
     for candidate in candidates:
         domains = generate_domain_candidates(candidate)

@@ -46,7 +46,9 @@ Return ONLY valid JSON with these exact keys."""
     )
     
     import json
-    copy = json.loads(response.choices[0].message.content)
+    raw = response.choices[0].message.content
+    raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+    copy = json.loads(raw)
     
     template_path = os.path.join(os.path.dirname(__file__), "..", "..", "templates", "landing_page.html")
     with open(template_path, "r", encoding="utf-8") as f:
