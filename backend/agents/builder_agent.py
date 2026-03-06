@@ -57,15 +57,15 @@ Return ONLY valid JSON with these exact keys."""
     payment_result = create_payment_link(brief.brand_name, 2900)
     payment_url = payment_result.get("payment_link_url", "#")
     
-    html = html.replace("{{brand_name}}", brief.brand_name)
-    html = html.replace("{{headline}}", copy["headline"])
-    html = html.replace("{{subheadline}}", copy["subheadline"])
-    html = html.replace("{{feature1}}", copy["feature1"])
-    html = html.replace("{{feature2}}", copy["feature2"])
-    html = html.replace("{{feature3}}", copy["feature3"])
-    html = html.replace("{{cta_label}}", copy["cta_label"])
+    html = html.replace("{{brand_name}}", brief.brand_name or "")
+    html = html.replace("{{headline}}", copy.get("headline", ""))
+    html = html.replace("{{subheadline}}", copy.get("subheadline", ""))
+    html = html.replace("{{feature_1}}", copy.get("feature1", copy.get("feature_1", "")))
+    html = html.replace("{{feature_2}}", copy.get("feature2", copy.get("feature_2", "")))
+    html = html.replace("{{feature_3}}", copy.get("feature3", copy.get("feature_3", "")))
+    html = html.replace("{{cta_label}}", copy.get("cta_label", "Get Started"))
     html = html.replace("{{cta_url}}", payment_url)
-    html = html.replace("{{social_proof}}", copy["social_proof"])
+    html = html.replace("{{social_proof}}", copy.get("social_proof", ""))
     
     deploy_result = deploy_landing_page(html, brief.brand_name)
     
