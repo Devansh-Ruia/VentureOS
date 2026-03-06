@@ -1,9 +1,11 @@
 import { NextRequest } from 'next/server';
 
+const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 export async function POST(req: NextRequest) {
   const { idea } = await req.json();
 
-  const response = await fetch('http://localhost:8000/api/run', {
+  const response = await fetch(`${backendUrl}/api/run`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ idea }),
