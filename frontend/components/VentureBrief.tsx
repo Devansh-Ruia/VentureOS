@@ -1,6 +1,7 @@
 interface VentureBrief {
   brand_name?: string;
   viability_score?: number;
+  landing_page_url?: string;
   market_summary?: string;
   differentiation?: string;
   competitors?: string[];
@@ -39,6 +40,33 @@ export default function VentureBrief({ brief }: VentureBriefProps) {
         >
           Viability score: {brief.viability_score} / 100
         </p>
+      )}
+
+      {brief.landing_page_url && (
+        <div style={{ marginBottom: '48px' }}>
+          <p style={{
+            fontSize: '11px',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: '#888',
+            marginBottom: '8px'
+          }}>
+            Live site
+          </p>
+          <a
+            href={brief.landing_page_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontSize: '15px',
+              color: '#1a1a1a',
+              textDecoration: 'underline',
+              textUnderlineOffset: '3px'
+            }}
+          >
+            {brief.landing_page_url} ↗
+          </a>
+        </div>
       )}
 
       <div className="space-y-8 mb-12">
