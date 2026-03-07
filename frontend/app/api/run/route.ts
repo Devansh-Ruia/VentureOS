@@ -5,7 +5,7 @@ const backendUrl = 'https://ventureos-4nga.onrender.com';
 export async function POST(req: NextRequest) {
   const { idea } = await req.json();
 
-  const response = await fetch(`${backendUrl}/api/demo`, {
+  const response = await fetch(`${backendUrl}/api/run`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ idea }),
