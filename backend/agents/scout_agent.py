@@ -3,6 +3,7 @@ from groq import Groq
 from models import VentureBrief
 from tools.apify_tools import run_competitor_search
 from tools.exa_tools import search_similar_products
+from tools.agent_staffing_tools import query_market_research, query_competitor_analysis, query_market_validation
 
 
 async def run_scout_task(brief: VentureBrief) -> VentureBrief:
@@ -13,17 +14,41 @@ async def run_scout_task(brief: VentureBrief) -> VentureBrief:
     competitor_data = run_competitor_search(brief.idea)
     similar_products = search_similar_products(brief.idea)
     
-    # Query external Nevermined research agent if configured
-    external_data = None
+    # Query Agent Staffing Agency API for enhanced research
+    agent_research = None
+    competitor_analysis = None
+    market_validation = None
+    
     try:
-        from nevermined.buyer import query_external_research_agent
-        external_data = await query_external_research_agent(brief.idea)
-    except ImportError:
-        pass
+        # Get general market research
+        market_result = await query_market_research(f"Market analysis for: {brief.idea}")
+        if market_result.get("success"):
+            agent_research = market_result.get("data")
+        
+        # Get competitor analysis
+        competitor_result = await query_competitor_analysis(f"Competitor analysis for: {brief.idea}")
+        if competitor_result.get("success"):
+            competitor_analysis = competitor_result.get("data")
+        
+        # Get market validation
+        validation_result = await query_market_validation(f"Validate this business idea: {brief.idea}")
+        if validation_result.get("success"):
+            market_validation = validation_result.get("data")
+            
+    except Exception as e:
+        print(f"Agent Staffing API error: {e}")
+        # Continue without Agent Staffing data if API fails
     
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     
-    external_context = f"\n\nExternal Research Data:\n{external_data}" if external_data else ""
+    # Build context from Agent Staffing Agency API
+    agent_context = ""
+    if agent_research:
+        agent_context += f"\n\nMarket Research (Agent Staffing Agency):\n{agent_research}"
+    if competitor_analysis:
+        agent_context += f"\n\nCompetitor Analysis (Agent Staffing Agency):\n{competitor_analysis}"
+    if market_validation:
+        agent_context += f"\n\nMarket Validation (Agent Staffing Agency):\n{market_validation}"
     
     prompt = f"""Analyze this business idea and research data:
 
@@ -33,7 +58,7 @@ Competitor Search Results:
 {competitor_data.get('results', [])}
 
 Similar Products (Exa):
-{similar_products.get('results', [])}{external_context}
+{similar_products.get('results', [])}{agent_context}
 
 Generate:
 1. market_summary: 2-3 sentences about the market opportunity
