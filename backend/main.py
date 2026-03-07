@@ -42,6 +42,78 @@ async def run_venture(request: RunRequest):
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
+@app.post("/api/demo")
+async def demo(request: dict):
+    import asyncio
+
+    idea = request.get("idea", "a business idea")
+    brand = "TrimStack"
+
+    events = [
+        ("scout", "running", None),
+        ("scout", "done", {
+            "viability_score": 74,
+            "market_summary": "The SaaS management market is growing rapidly as businesses accumulate more subscriptions than they can track. Tools for solopreneurs are underserved compared to enterprise solutions.",
+            "competitors": ["Cleanshelf", "Torii", "Zluri"],
+            "differentiation": "Built specifically for solopreneurs, not enterprise IT teams."
+        }),
+        ("brand", "running", None),
+        ("brand", "done", {
+            "brand_name": brand,
+            "domain": "trimstack.io",
+            "domain_available": True
+        }),
+        ("builder", "running", None),
+        ("builder", "done", {
+            "landing_page_url": "https://trimstack-xyz.vercel.app",
+            "stripe_payment_link": "https://buy.stripe.com/test_demo"
+        }),
+        ("gtm", "running", None),
+        ("gtm", "done", {
+            "gtm_plan": {
+                "reddit_communities": ["entrepreneur", "SaaS", "solopreneur", "startups", "indiehackers"],
+                "cold_email": "Subject: You're probably paying for tools you forgot about\n\nTrimStack finds every subscription you're paying for and helps you cut what you don't need. Built for solopreneurs, not IT teams.\n\nTry it free: trimstack.io",
+                "tweet_drafts": [
+                    "Solopreneurs waste $2,400/year on forgotten SaaS tools. TrimStack finds them all.",
+                    "Built TrimStack to track every subscription I forgot I was paying for. Now it's yours.",
+                    "Your SaaS bill is lying to you. trimstack.io"
+                ],
+                "product_hunt_blurb": "TrimStack: subscription tracking built for solopreneurs, not enterprise"
+            }
+        }),
+        ("orchestrator", "done", {
+            "idea": idea,
+            "brand_name": brand,
+            "domain": "trimstack.io",
+            "domain_available": True,
+            "viability_score": 74,
+            "market_summary": "The SaaS management market is growing rapidly as businesses accumulate more subscriptions than they can track. Tools for solopreneurs are underserved compared to enterprise solutions.",
+            "competitors": ["Cleanshelf", "Torii", "Zluri"],
+            "differentiation": "Built specifically for solopreneurs, not enterprise IT teams.",
+            "landing_page_url": "https://trimstack-xyz.vercel.app",
+            "stripe_payment_link": "https://buy.stripe.com/test_demo",
+            "gtm_plan": {
+                "reddit_communities": ["entrepreneur", "SaaS", "solopreneur", "startups", "indiehackers"],
+                "cold_email": "Subject: You're probably paying for tools you forgot about\n\nTrimStack finds every subscription you're paying for and helps you cut what you don't need. Built for solopreneurs, not IT teams.\n\nTry it free: trimstack.io",
+                "tweet_drafts": [
+                    "Solopreneurs waste $2,400/year on forgotten SaaS tools. TrimStack finds them all.",
+                    "Built TrimStack to track every subscription I forgot I was paying for. Now it's yours.",
+                    "Your SaaS bill is lying to you. trimstack.io"
+                ],
+                "product_hunt_blurb": "TrimStack: subscription tracking built for solopreneurs, not enterprise"
+            }
+        })
+    ]
+
+    async def stream():
+        for agent, status, output in events:
+            await asyncio.sleep(1.5)
+            event = {"agent": agent, "status": status, "output": output, "message": None}
+            yield f"data: {json.dumps(event)}\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream")
+
+
 @app.get("/.well-known/agent.json")
 async def agent_card():
     """Nevermined A2A agent card."""
