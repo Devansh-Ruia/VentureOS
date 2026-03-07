@@ -33,13 +33,26 @@ class RunRequest(BaseModel):
 
 
 @app.post("/api/run")
-async def run_venture(request: RunRequest):
-    async def event_stream():
-        async for event in run_venture_pipeline(request.idea):
-            data = json.dumps(event.model_dump())
-            yield f"data: {data}\n\n"
-    
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
+async def run_venture(request: dict):
+    idea = request.get("idea", "")
+
+    async def stream():
+        import asyncio
+        pipeline = run_venture_pipeline(idea)
+        while True:
+            try:
+                event = await asyncio.wait_for(
+                    pipeline.__anext__(), 
+                    timeout=15.0
+                )
+                yield f"data: {event.model_dump_json()}\n\n"
+            except asyncio.TimeoutError:
+                # keepalive ping — prevents Render from closing the connection
+                yield ": keepalive\n\n"
+            except StopAsyncIteration:
+                break
+
+    return StreamingResponse(stream(), media_type="text/event-stream")
 
 
 @app.post("/api/demo")
