@@ -1,9 +1,10 @@
 import os
 from groq import Groq
 from models import VentureBrief, GTMPlan
+from tools.adagent_tools import run_adagent_campaign
 
 
-def run_gtm_task(brief: VentureBrief) -> VentureBrief:
+async def run_gtm_task(brief: VentureBrief) -> VentureBrief:
     """
     Generate Week 1 go-to-market plan.
     Returns final VentureBrief with GTM strategy.
@@ -52,5 +53,23 @@ Return ONLY valid JSON with structure:
         tweet_drafts=result["tweet_drafts"][:3],
         product_hunt_blurb=result["product_hunt_blurb"]
     )
+    
+    audience = brief.market_summary or "early adopters and founders"
+    goal = f"Acquire first 100 customers for {brief.brand_name}"
+
+    campaign = await run_adagent_campaign(
+        brand=brief.brand_name or "",
+        goal=goal,
+        audience=audience,
+        budget=15.0
+    )
+
+    if campaign and campaign.get("status") == "complete":
+        strategy = campaign.get("strategy", {})
+        brief.adagent_campaign_id = campaign.get("campaign_id")
+        brief.adagent_strategy = strategy
+        brief.adagent_metrics = campaign.get("metrics")
+        brief.adagent_channels = strategy.get("channels", [])
+        brief.adagent_messaging = strategy.get("messaging", [])
     
     return brief

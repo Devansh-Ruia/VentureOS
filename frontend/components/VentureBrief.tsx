@@ -15,6 +15,11 @@ interface VentureBrief {
     tweet_drafts?: string[];
     product_hunt_blurb?: string;
   };
+  adagent_campaign_id?: string;
+  adagent_strategy?: any;
+  adagent_metrics?: any;
+  adagent_channels?: string[];
+  adagent_messaging?: string[];
 }
 
 interface VentureBriefProps {
@@ -293,6 +298,37 @@ export default function VentureBrief({ brief }: VentureBriefProps) {
                 style={{ fontFamily: 'system-ui, sans-serif', fontSize: '14px', lineHeight: '1.6' }}
               >
                 {brief.gtm_plan.product_hunt_blurb}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {brief.adagent_campaign_id && (
+        <div style={{ marginTop: '48px' }}>
+          <hr style={{ border: 'none', borderTop: '1px solid #1a1a1a', marginBottom: '48px' }} />
+          <p style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#888', marginBottom: '24px' }}>
+            Ad campaign
+          </p>
+          {brief.adagent_channels && brief.adagent_channels.length > 0 && (
+            <div style={{ marginBottom: '24px' }}>
+              <p style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#888', marginBottom: '8px' }}>Channels</p>
+              <p style={{ fontSize: '15px', lineHeight: '1.5' }}>{brief.adagent_channels.join(', ')}</p>
+            </div>
+          )}
+          {brief.adagent_messaging && brief.adagent_messaging.length > 0 && (
+            <div style={{ marginBottom: '24px' }}>
+              <p style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#888', marginBottom: '8px' }}>Messaging</p>
+              {brief.adagent_messaging.map((msg: string, i: number) => (
+                <p key={i} style={{ fontSize: '15px', lineHeight: '1.6' }}>— {msg}</p>
+              ))}
+            </div>
+          )}
+          {brief.adagent_metrics && (
+            <div style={{ marginBottom: '24px' }}>
+              <p style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#888', marginBottom: '8px' }}>Projected metrics</p>
+              <p style={{ fontSize: '15px' }}>
+                {brief.adagent_metrics.roi} ROI · {brief.adagent_metrics.clicks} clicks · {brief.adagent_metrics.conversions} conversions
               </p>
             </div>
           )}

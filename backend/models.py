@@ -22,6 +22,11 @@ class VentureBrief(BaseModel):
     landing_page_url: str | None = None
     stripe_payment_link: str | None = None
     gtm_plan: GTMPlan | None = None
+    adagent_campaign_id: str | None = None
+    adagent_strategy: dict | None = None
+    adagent_metrics: dict | None = None
+    adagent_channels: list[str] | None = None
+    adagent_messaging: list[str] | None = None
 
 
 class AgentEvent(BaseModel):
