@@ -41,11 +41,24 @@ Return ONLY valid JSON with structure:
     )
     
     import json
-    raw = response.choices[0].message.content
-    raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-    result = json.loads(raw)
+    try:
+        raw = response.choices[0].message.content
+        raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+        result = json.loads(raw)
+    except Exception as e:
+        print(f"GTM JSON parse failed: {e}, raw: {raw[:200]}")
+        result = {
+            "reddit_communities": [],
+            "cold_email": {"subject": "", "body": ""},
+            "tweet_drafts": ["", "", ""],
+            "product_hunt_blurb": ""
+        }
     
-    cold_email_str = f"Subject: {result['cold_email']['subject']}\n\n{result['cold_email']['body']}"
+    cold_email_data = result["cold_email"]
+    if isinstance(cold_email_data, dict):
+        cold_email_str = f"Subject: {cold_email_data.get('subject', '')}\n\n{cold_email_data.get('body', '')}"
+    else:
+        cold_email_str = str(cold_email_data)
     
     brief.gtm_plan = GTMPlan(
         reddit_communities=result["reddit_communities"][:5],
